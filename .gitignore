@@ -1,0 +1,123 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Node.js / npm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+.pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Foundry / Solidity
+out/
+cache/
+broadcast/
+lib/
+foundry.lock
+
+# Build artifacts
+build/
+dist/
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+database/
+*.db-journal
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Deployment files (may contain secrets)
+deployment.json
+!contracts/deployment.json.example
+!hardware-web3-service/deployment.json.example
+
+# Hardware key cache
+.hardware_key_cache
+.device_key_export
+.temp_get_key.py
+
+# Captures / uploads
+captures/
+uploads/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+
+# Coverage reports
+coverage/
+.nyc_output/
+*.lcov
+
+# TypeScript
+*.tsbuildinfo
+
+# Rust (for risc0)
+target/
+Cargo.lock
+
+# Misc
+*.bak
+*.backup
+*.old
+.cache/
+
