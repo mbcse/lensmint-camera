@@ -1,0 +1,17 @@
+[Unit]
+Description=LensMint Web3 Camera System
+After=network.target
+
+[Service]
+Type=forking
+User=%i
+WorkingDirectory=%h/lensmint
+ExecStart=/usr/bin/pm2 start %h/lensmint/ecosystem.config.js
+ExecReload=/usr/bin/pm2 reload %h/lensmint/ecosystem.config.js
+ExecStop=/usr/bin/pm2 stop %h/lensmint/ecosystem.config.js
+PIDFile=%h/.pm2/pm2.pid
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
