@@ -142,69 +142,79 @@ class FilecoinService {
     }
   }
 
-  async uploadImage(imageData) {
+  async uploadImage(imageData, retries = 3) {
     if (!this.initialized) {
       throw new Error('Filecoin service not initialized');
     }
-
-    try {
-      let fileData;
-      if (Buffer.isBuffer(imageData)) {
-        fileData = imageData;
-      } else {
-        fileData = fs.readFileSync(imageData);
-      }
-
-      const dataToUpload = Buffer.isBuffer(fileData) 
-        ? new Uint8Array(fileData.buffer, fileData.byteOffset, fileData.byteLength)
-        : new Uint8Array(fileData);
-
-      if (!this.synapse) {
-        throw new Error('Synapse SDK not initialized');
-      }
-
-      await this.ensurePaymentSetup();
-      
+    
+    let lastError;
+    for (let attempt = 1; attempt <= retries; attempt++) {
       try {
-        if (this.synapse.payments && typeof this.synapse.payments.accountInfo === 'function') {
-          const accountInfo = await this.synapse.payments.accountInfo(TOKENS.USDFC);
-          console.log(`   📊 Account info - Funds: ${ethers.formatUnits(accountInfo.funds, 18)} USDFC, Available: ${ethers.formatUnits(accountInfo.availableFunds, 18)} USDFC`);
-          
-          if (accountInfo.funds === 0n) {
-            throw new Error('No funds deposited in payments contract');
+        let fileData;
+        if (Buffer.isBuffer(imageData)) {
+          fileData = imageData;
+        } else {
+          fileData = fs.readFileSync(imageData);
+        }
+
+        const dataToUpload = Buffer.isBuffer(fileData) 
+          ? new Uint8Array(fileData.buffer, fileData.byteOffset, fileData.byteLength)
+          : new Uint8Array(fileData);
+
+        if (!this.synapse) {
+          throw new Error('Synapse SDK not initialized');
+        }
+
+        await this.ensurePaymentSetup();
+        
+        try {
+          if (this.synapse.payments && typeof this.synapse.payments.accountInfo === 'function') {
+            const accountInfo = await this.synapse.payments.accountInfo(TOKENS.USDFC);
+            console.log(`   📊 Account info - Funds: ${ethers.formatUnits(accountInfo.funds, 18)} USDFC, Available: ${ethers.formatUnits(accountInfo.availableFunds, 18)} USDFC`);
+            
+            if (accountInfo.funds === 0n) {
+              throw new Error('No funds deposited in payments contract');
+            }
+            
+            if (accountInfo.availableFunds === 0n) {
+              console.warn(`   ⚠️  All funds are locked up. Available: 0 USDFC`);
+            }
           }
           
-          if (accountInfo.availableFunds === 0n) {
-            console.warn(`   ⚠️  All funds are locked up. Available: 0 USDFC`);
+          if (this.synapse.payments && typeof this.synapse.payments.serviceApproval === 'function') {
+            const warmStorageAddress = this.synapse.getWarmStorageAddress();
+            const approval = await this.synapse.payments.serviceApproval(warmStorageAddress, TOKENS.USDFC);
+            console.log(`   📊 Service approval - Approved: ${approval.isApproved}, Rate allowance: ${ethers.formatUnits(approval.rateAllowance, 18)}`);
+            
+            if (!approval.isApproved) {
+              console.warn(`   ⚠️  Warm Storage service is not approved. Upload may fail.`);
+            }
           }
+        } catch (checkError) {
+          console.warn(`   ⚠️  Could not verify account/service info: ${checkError.message}`);
         }
         
-        if (this.synapse.payments && typeof this.synapse.payments.serviceApproval === 'function') {
-          const warmStorageAddress = this.synapse.getWarmStorageAddress();
-          const approval = await this.synapse.payments.serviceApproval(warmStorageAddress, TOKENS.USDFC);
-          console.log(`   📊 Service approval - Approved: ${approval.isApproved}, Rate allowance: ${ethers.formatUnits(approval.rateAllowance, 18)}`);
-          
-          if (!approval.isApproved) {
-            console.warn(`   ⚠️  Warm Storage service is not approved. Upload may fail.`);
-          }
-        }
-      } catch (checkError) {
-        console.warn(`   ⚠️  Could not verify account/service info: ${checkError.message}`);
-      }
-      
-      const result = await this.synapse.storage.upload(dataToUpload);
+        const result = await this.synapse.storage.upload(dataToUpload);
 
-      console.log(`   ✅ Upload result: ${result}`);
-      
-      const pieceCid = result?.pieceCid;
-      if (!pieceCid) {
-        throw new Error('Upload succeeded but no PieceCID returned');
+        console.log(`   ✅ Upload result: ${result}`);
+        
+        const pieceCid = result?.pieceCid;
+        if (!pieceCid) {
+          throw new Error('Upload succeeded but no PieceCID returned');
+        }
+        
+        return pieceCid.toString();
+      } catch (error) {
+        lastError = error;
+        if (attempt < retries) {
+          const delay = attempt * 1000;
+          console.warn(`   ⚠️ Upload attempt ${attempt} failed, retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        } else {
+          console.error(`❌ Filecoin upload failed after ${retries} attempts: ${error}`);
+          throw error;
+        }
       }
-      
-      return pieceCid.toString();
-    } catch (error) {
-      console.error(`❌ Filecoin upload error: ${error}`);
-      throw error;
     }
   }
 
