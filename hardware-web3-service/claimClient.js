@@ -3,10 +3,10 @@ import axios from 'axios';
 class ClaimClient {
   constructor() {
     this.baseURL = process.env.CLAIM_SERVER_URL || 'https://lensmint.onrender.com';
-    // Configure axios client with timeout
+    const timeout = parseInt(process.env.CLAIM_CLIENT_TIMEOUT || '30000', 10);
     this.client = axios.create({
       baseURL: this.baseURL,
-      timeout: 10000,
+      timeout: timeout,
       headers: {
         'Content-Type': 'application/json'
       }
