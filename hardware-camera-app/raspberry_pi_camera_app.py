@@ -1163,9 +1163,18 @@ class CameraApp(App):
         """Upload image to backend and create claim."""
         # Check if offline - save to queue
         try:
-            # Try to ping backend first
-            requests.get(f'{BACKEND_URL}/health', timeout=2)
-            online = True
+            # Try to ping backend first with retry
+            online = False
+            for attempt in range(3):
+                try:
+                    requests.get(f'{BACKEND_URL}/health', timeout=2)
+                    online = True
+                    break
+                except:
+                    if attempt < 2:
+                        time.sleep(1)
+                    else:
+                        online = False
         except:
             online = False
             print("⚠️ Backend offline - saving to queue")
