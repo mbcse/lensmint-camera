@@ -660,6 +660,26 @@ app.post('/api/images/upload', upload.single('image'), async (req, res) => {
       });
     }
 
+    // Validate file type
+    const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedMimeTypes.includes(req.file.mimetype)) {
+      fs.unlinkSync(req.file.path);
+      return res.status(400).json({
+        success: false,
+        error: `Invalid file type. Allowed types: ${allowedMimeTypes.join(', ')}`
+      });
+    }
+
+    // Validate file size (max 50MB)
+    const maxSize = 50 * 1024 * 1024;
+    if (req.file.size > maxSize) {
+      fs.unlinkSync(req.file.path);
+      return res.status(400).json({
+        success: false,
+        error: `File too large. Maximum size: ${maxSize / 1024 / 1024}MB`
+      });
+    }
+
     const {
       imageHash,
       signature,
