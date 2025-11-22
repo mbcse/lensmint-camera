@@ -15,6 +15,10 @@ function OwnerDashboard() {
   const [signerAddress, setSignerAddress] = useState(null)
   const [status, setStatus] = useState('')
   const [mintStatus, setMintStatus] = useState('')
+  const [ipfsHash, setIpfsHash] = useState('')
+  const [imageHash, setImageHash] = useState('')
+  const [signature, setSignature] = useState('')
+  const [maxEditions, setMaxEditions] = useState(10)
 
   useEffect(() => {
     if (authenticated && wallets.length > 0 && !sessionSigner) {
@@ -53,21 +57,26 @@ function OwnerDashboard() {
     }
   }
 
-  const handleMintTest = async () => {
+  const handleMint = async (ipfsHash, imageHash, signature, maxEditions) => {
     try {
       if (!sessionSigner?.id) {
         setMintStatus('❌ Please setup session signer first')
         return
       }
 
-      setMintStatus('Minting test NFT with gas sponsorship...')
+      if (!address) {
+        setMintStatus('❌ No wallet address available')
+        return
+      }
+
+      setMintStatus('Minting NFT...')
       
       const response = await axios.post(`${BACKEND_URL}/api/privy/mint-with-signer`, {
         recipient: address,
-        ipfsHash: 'QmTest1234567890abcdef',
-        imageHash: '0x' + 'a'.repeat(64),
-        signature: '0x' + 'b'.repeat(130),
-        maxEditions: 10,
+        ipfsHash,
+        imageHash,
+        signature,
+        maxEditions,
         sessionSignerId: sessionSigner.id
       })
 
@@ -163,9 +172,48 @@ function OwnerDashboard() {
               </button>
             )}
             {sessionSigner && (
-              <button onClick={handleMintTest} className="action-button primary">
-                Mint Test NFT
-              </button>
+              <div className="mint-form">
+                <input 
+                  type="text" 
+                  placeholder="IPFS Hash" 
+                  value={ipfsHash}
+                  onChange={(e) => setIpfsHash(e.target.value)}
+                  className="input-field" 
+                />
+                <input 
+                  type="text" 
+                  placeholder="Image Hash" 
+                  value={imageHash}
+                  onChange={(e) => setImageHash(e.target.value)}
+                  className="input-field" 
+                />
+                <input 
+                  type="text" 
+                  placeholder="Signature" 
+                  value={signature}
+                  onChange={(e) => setSignature(e.target.value)}
+                  className="input-field" 
+                />
+                <input 
+                  type="number" 
+                  placeholder="Max Editions" 
+                  value={maxEditions}
+                  onChange={(e) => setMaxEditions(parseInt(e.target.value) || 10)}
+                  className="input-field" 
+                />
+                <button 
+                  onClick={() => {
+                    if (ipfsHash && imageHash && signature) {
+                      handleMint(ipfsHash, imageHash, signature, maxEditions)
+                    } else {
+                      setMintStatus('❌ Please fill all fields')
+                    }
+                  }} 
+                  className="action-button primary"
+                >
+                  Mint NFT
+                </button>
+              </div>
             )}
           </div>
           {mintStatus && (

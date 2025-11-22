@@ -1,0 +1,25 @@
+{
+  "name": "lensmint-owner-portal",
+  "version": "1.0.0",
+  "description": "Owner portal for LensMint with Privy integration",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@privy-io/react-auth": "^2.0.0",
+    "@privy-io/wagmi": "^2.0.0",
+    "wagmi": "^2.0.0",
+    "viem": "^2.0.0",
+    "axios": "^1.6.0",
+    "@tanstack/react-query": "^5.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.0",
+    "vite": "^5.0.0"
+  }
+}

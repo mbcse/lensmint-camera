@@ -1,0 +1,149 @@
+.container {
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+h1 {
+  color: #333;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+h2 {
+  color: #667eea;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.info-grid {
+  display: grid;
+  gap: 12px;
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.info-grid div {
+  font-size: 14px;
+  color: #555;
+  word-break: break-all;
+}
+
+.info-grid strong {
+  color: #333;
+  margin-right: 8px;
+}
+
+.login-button,
+.logout-button,
+.action-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.login-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  width: 100%;
+  margin-top: 24px;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.logout-button {
+  background: #ef4444;
+  color: white;
+  font-size: 14px;
+}
+
+.logout-button:hover {
+  background: #dc2626;
+}
+
+.action-button {
+  background: #667eea;
+  color: white;
+  margin-right: 12px;
+}
+
+.action-button:hover {
+  background: #5568d3;
+  transform: translateY(-2px);
+}
+
+.action-button.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.status-message {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f0f9ff;
+  border-left: 4px solid #667eea;
+  border-radius: 4px;
+  color: #333;
+}
+
+.info-text {
+  color: #666;
+  line-height: 1.6;
+  background: #f0f9ff;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.warning-message {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  padding: 12px;
+  border-radius: 4px;
+  color: #92400e;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.login-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+p {
+  color: #666;
+  margin-bottom: 16px;
+}
+
