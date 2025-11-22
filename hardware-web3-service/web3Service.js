@@ -302,6 +302,20 @@ class Web3Service {
       
       console.log(`   ✅ Device ${deviceAddress} is registered and active - proceeding with mint`);
 
+      // Estimate gas before minting
+      try {
+        const gasEstimate = await this.lensMint.mintOriginal.estimateGas(
+          recipient,
+          ipfsHash,
+          imageHash,
+          signature,
+          maxEditions
+        );
+        console.log(`   ⛽ Estimated gas: ${gasEstimate.toString()}`);
+      } catch (gasError) {
+        console.warn(`   ⚠️ Gas estimation failed: ${gasError.message}`);
+      }
+
       const tx = await this.lensMint.mintOriginal(
         recipient,
         ipfsHash,
