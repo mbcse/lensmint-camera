@@ -57,7 +57,11 @@
       <td align="center"><img src="assets/Screenshot 2025-11-23 at 8.47.58 AM.png" alt="Backend Screenshot 6" width="400"/><br/><small>Screenshot 6</small></td>
     </tr>
     <tr>
-      <td align="center" colspan="2"><img src="assets/Screenshot 2025-11-23 at 8.48.14 AM.png" alt="Backend Screenshot 7" width="400"/><br/><small>Screenshot 7</small></td>
+      <td align="center"><img src="assets/Screenshot 2025-11-23 at 8.48.14 AM.png" alt="Backend Screenshot 7" width="400"/><br/><small>Screenshot 7</small></td>
+      <td align="center"><img src="assets/Screenshot 2025-11-23 at 9.02.44 AM.png" alt="Backend Screenshot 8" width="400"/><br/><small>Screenshot 8</small></td>
+    </tr>
+    <tr>
+      <td align="center" colspan="2"><img src="assets/Screenshot 2025-11-23 at 9.03.05 AM.png" alt="Backend Screenshot 9" width="400"/><br/><small>Screenshot 9</small></td>
     </tr>
   </table>
 </div>

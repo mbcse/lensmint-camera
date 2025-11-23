@@ -103,6 +103,14 @@ uploads/
 *.gif
 *.webp
 
+# Allow assets folder images
+!assets/
+!assets/**/*.jpg
+!assets/**/*.jpeg
+!assets/**/*.png
+!assets/**/*.gif
+!assets/**/*.webp
+
 # Coverage reports
 coverage/
 .nyc_output/
