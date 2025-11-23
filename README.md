@@ -9,8 +9,86 @@
 
 **A Web3 camera system that solves real problems for creators: prove photos are authentic (not AI-generated), create proof of attendance at events, preserve memories with verified blockchain records, and easily mint NFTs for others (attendees, people in photos).**
 
-[Features](#-features) • [How It Works](#-how-it-works) • [Architecture](#-technical-architecture) • [Installation](#-installation) • [Hardware](#-hardware-requirements)
+[Gallery](#-gallery) • [Features](#-features) • [How It Works](#-how-it-works) • [Architecture](#-technical-architecture) • [Installation](#-installation) • [Hardware](#-hardware-requirements)
 
+</div>
+
+---
+
+## 📸 Gallery
+
+### 🖼️ Logo
+<div align="center">
+  <img src="assets/lensmintlogo.png" alt="LensMint Logo" width="300"/>
+</div>
+
+### 🔧 Hardware Components
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><img src="assets/COMPONENTS/IMG_1430.JPG" alt="Component 1" width="200"/></td>
+      <td align="center"><img src="assets/COMPONENTS/IMG_1431.JPG" alt="Component 2" width="200"/></td>
+      <td align="center"><img src="assets/COMPONENTS/IMG_1432.JPG" alt="Component 3" width="200"/></td>
+    </tr>
+    <tr>
+      <td align="center"><img src="assets/COMPONENTS/IMG_1433.JPG" alt="Component 4" width="200"/></td>
+      <td align="center"><img src="assets/COMPONENTS/IMG_1434.JPG" alt="Component 5" width="200"/></td>
+      <td align="center"><img src="assets/COMPONENTS/IMG_1435.JPG" alt="Component 6" width="200"/></td>
+    </tr>
+    <tr>
+      <td align="center" colspan="3"><img src="assets/COMPONENTS/IMG_1436.JPG" alt="Component 7" width="200"/></td>
+    </tr>
+  </table>
+</div>
+
+### 💻 Backend Screenshots
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><img src="assets/Screenshot 2025-11-23 at 8.45.49 AM.png" alt="Backend Screenshot 1" width="400"/><br/><small>Screenshot 1</small></td>
+      <td align="center"><img src="assets/Screenshot 2025-11-23 at 8.46.11 AM.png" alt="Backend Screenshot 2" width="400"/><br/><small>Screenshot 2</small></td>
+    </tr>
+    <tr>
+      <td align="center"><img src="assets/Screenshot 2025-11-23 at 8.46.34 AM.png" alt="Backend Screenshot 3" width="400"/><br/><small>Screenshot 3</small></td>
+      <td align="center"><img src="assets/Screenshot 2025-11-23 at 8.46.54 AM.png" alt="Backend Screenshot 4" width="400"/><br/><small>Screenshot 4</small></td>
+    </tr>
+    <tr>
+      <td align="center"><img src="assets/Screenshot 2025-11-23 at 8.47.42 AM.png" alt="Backend Screenshot 5" width="400"/><br/><small>Screenshot 5</small></td>
+      <td align="center"><img src="assets/Screenshot 2025-11-23 at 8.47.58 AM.png" alt="Backend Screenshot 6" width="400"/><br/><small>Screenshot 6</small></td>
+    </tr>
+    <tr>
+      <td align="center" colspan="2"><img src="assets/Screenshot 2025-11-23 at 8.48.14 AM.png" alt="Backend Screenshot 7" width="400"/><br/><small>Screenshot 7</small></td>
+    </tr>
+  </table>
+</div>
+
+### 📷 Physical Camera Final Images
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><img src="assets/IMG_1813.JPG" alt="Camera Image 1" width="300"/></td>
+      <td align="center"><img src="assets/IMG_1814.JPG" alt="Camera Image 2" width="300"/></td>
+      <td align="center"><img src="assets/IMG_1815.JPG" alt="Camera Image 3" width="300"/></td>
+    </tr>
+    <tr>
+      <td align="center"><img src="assets/IMG_1816.JPG" alt="Camera Image 4" width="300"/></td>
+      <td align="center"><img src="assets/IMG_1818.JPG" alt="Camera Image 5" width="300"/></td>
+      <td align="center"><img src="assets/IMG_1819.JPG" alt="Camera Image 6" width="300"/></td>
+    </tr>
+    <tr>
+      <td align="center"><img src="assets/IMG_1820.JPG" alt="Camera Image 7" width="300"/></td>
+      <td align="center"><img src="assets/IMG_1830.JPG" alt="Camera Image 8" width="300"/></td>
+      <td align="center"><img src="assets/IMG_1831.JPG" alt="Camera Image 9" width="300"/></td>
+    </tr>
+    <tr>
+      <td align="center"><img src="assets/IMG_1832.JPG" alt="Camera Image 10" width="300"/></td>
+      <td align="center"><img src="assets/IMG_1833.JPG" alt="Camera Image 11" width="300"/></td>
+      <td align="center"><img src="assets/IMG_1836.JPG" alt="Camera Image 12" width="300"/></td>
+    </tr>
+    <tr>
+      <td align="center" colspan="3"><img src="assets/IMG_1837.JPG" alt="Camera Image 13" width="300"/></td>
+    </tr>
+  </table>
 </div>
 
 ---
@@ -682,6 +760,18 @@ npm install
 
 Create `.env` files in `hardware-web3-service` and `lensmint-public-server` directories with your configuration settings.
 
+**For Privy Integration (Owner Portal):**
+- Add to `hardware-web3-service/.env`:
+  ```
+  PRIVY_APP_ID=your-privy-app-id
+  PRIVY_APP_SECRET=your-privy-app-secret
+  ```
+- Add to `owner-portal/.env`:
+  ```
+  VITE_PRIVY_APP_ID=your-privy-app-id
+  VITE_BACKEND_URL=http://localhost:5000
+  ```
+
 ### Step 7: Initialize Hardware Identity
 
 ```bash
@@ -712,7 +802,24 @@ source venv/bin/activate
 python3 raspberry_pi_camera_app.py
 ```
 
-### Step 10: Setup Auto-Start (Optional)
+### Step 10: Start Owner Portal (Optional)
+
+For owner wallet management with Privy integration:
+
+```bash
+cd owner-portal
+npm install
+npm run dev
+```
+
+The owner portal will be available at `http://localhost:3000`. This allows the owner to:
+- Login with Privy (wallet, email, or SMS)
+- Setup session signers for backend transaction signing
+- Mint NFTs with automatic gas sponsorship
+
+See `PRIVY_SETUP.md` for detailed Privy configuration.
+
+### Step 11: Setup Auto-Start (Optional)
 
 Create a systemd service or add to autostart:
 
