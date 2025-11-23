@@ -23,7 +23,8 @@
     "form-data": "^4.0.0",
     "@filoz/synapse-sdk": "0.35.3",
     "@lighthouse-web3/sdk": "^0.4.3",
-    "viem": "^2.0.0"
+    "viem": "^2.0.0",
+    "@privy-io/server-auth": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

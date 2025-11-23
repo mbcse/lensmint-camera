@@ -7,6 +7,7 @@ import multer from 'multer';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import os from 'os';
+import { ethers } from 'ethers';
 
 dotenv.config();
 
@@ -15,6 +16,8 @@ import web3Service from './web3Service.js';
 import filecoinService from './filecoinService.js';
 import claimClient from './claimClient.js';
 import { generateProof, submitProofOnChain } from './vlayerService.js';
+import privyService from './privyService.js';
+import deploymentService from './deploymentService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -94,6 +97,13 @@ async function initializeServices() {
       console.log('✅ Claim server connected');
     } else {
       console.warn('⚠️ Claim server not available');
+    }
+
+    privyService.initialize();
+    if (privyService.initialized) {
+      console.log('✅ Privy service initialized');
+    } else {
+      console.warn('⚠️ Privy service not available');
     }
 
     servicesInitialized = true;
@@ -1131,6 +1141,124 @@ app.get('/api/proofs/token/:token_id', async (req, res) => {
   }
 });
 
+// Privy Session Signer Endpoints
+app.post('/api/privy/create-session-signer', async (req, res) => {
+  try {
+    if (!privyService.initialized) {
+      return res.status(503).json({
+        success: false,
+        error: 'Privy service not initialized'
+      });
+    }
+
+    const { walletAddress, userId } = req.body;
+
+    if (!walletAddress || !userId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: walletAddress, userId'
+      });
+    }
+
+    const sessionSigner = await privyService.createSessionSigner(walletAddress, userId);
+
+    res.json({
+      success: true,
+      sessionSigner: {
+        id: sessionSigner.id,
+        permissions: sessionSigner.permissions
+      },
+      signerAddress: sessionSigner.address
+    });
+  } catch (error) {
+    console.error('❌ Error creating session signer:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+app.post('/api/privy/mint-with-signer', async (req, res) => {
+  try {
+    if (!privyService.initialized) {
+      return res.status(503).json({
+        success: false,
+        error: 'Privy service not initialized'
+      });
+    }
+
+    const {
+      recipient,
+      ipfsHash,
+      imageHash,
+      signature,
+      maxEditions,
+      sessionSignerId
+    } = req.body;
+
+    if (!sessionSignerId || !recipient || !ipfsHash || !imageHash || !signature) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields'
+      });
+    }
+
+    if (!web3Service.initialized || !web3Service.lensMint) {
+      return res.status(503).json({
+        success: false,
+        error: 'Web3 service not initialized'
+      });
+    }
+
+    // Get contract ABI and address
+    const lensMintAddress = deploymentService.getLensMintAddress() || process.env.LENSMINT_ERC1155_ADDRESS;
+    
+    if (!lensMintAddress) {
+      return res.status(400).json({
+        success: false,
+        error: 'LensMint contract address not configured'
+      });
+    }
+
+    // Get contract ABI
+    const lensMintABI = deploymentService.getLensMintABI() || web3Service.getLensMintABI();
+    const lensMintInterface = new ethers.Interface(lensMintABI);
+    
+    // Prepare transaction data
+    const transaction = {
+      to: lensMintAddress,
+      data: lensMintInterface.encodeFunctionData('mintOriginal', [
+        recipient,
+        ipfsHash,
+        imageHash,
+        signature,
+        maxEditions || 0
+      ])
+    };
+
+    // Send transaction using Privy session signer with gas sponsorship
+    const result = await privyService.sendTransaction(sessionSignerId, transaction);
+
+    console.log(`🎨 Minted NFT using Privy session signer`);
+    console.log(`   Transaction: ${result.txHash}`);
+    console.log(`   Block: ${result.blockNumber}`);
+
+    res.json({
+      success: true,
+      txHash: result.txHash,
+      blockNumber: result.blockNumber,
+      message: 'NFT minted successfully with gas sponsorship'
+    });
+  } catch (error) {
+    console.error('❌ Error minting with session signer:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 async function startServer() {
   await initializeServices();
 
@@ -1154,6 +1282,8 @@ async function startServer() {
     console.log(`   - GET  /api/claims/check`);
     console.log(`   - GET  /api/proofs/:claim_id`);
     console.log(`   - GET  /api/proofs/token/:token_id`);
+    console.log(`   - POST /api/privy/create-session-signer`);
+    console.log(`   - POST /api/privy/mint-with-signer`);
     console.log('═══════════════════════════════════════');
   });
 }
